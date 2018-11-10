@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
                startScan();
             }
         });
+        startScan();
         if(savedInstanceState != null){
             Barcode restoredBarcode = savedInstanceState.getParcelable(BARCODE_KEY);
             if(restoredBarcode != null){
@@ -67,10 +68,15 @@ public class MainActivity extends AppCompatActivity {
                     public void onResult(Barcode barcode) {
                         barcodeResult = barcode;
                         result.setText(barcode.rawValue);
+                        sendData(barcode.rawValue);
                     }
                 })
                 .build();
         materialBarcodeScanner.startScan();
+    }
+
+    private void sendData(String barcode){
+
     }
 
     @Override
