@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -53,7 +54,16 @@ public class MainActivity extends AppCompatActivity {
                startScan();
             }
         });
-        startScan();
+
+        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radio);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            public void onCheckedChanged(RadioGroup group, int checkedId)
+            {
+                startScan();
+            }
+        });
+
         if(savedInstanceState != null){
             Barcode restoredBarcode = savedInstanceState.getParcelable(BARCODE_KEY);
             if(restoredBarcode != null){
@@ -90,15 +100,24 @@ public class MainActivity extends AppCompatActivity {
         try {
             result.setText("Atempting");
             RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
+            RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radio);
+            final int selected = radioGroup.getCheckedRadioButtonId();
+            final int location = selected - 2131558524;
+
 
             //String url = "https://jsonplaceholder.typicode.com/todos";
-            String url = "https://32226816.ngrok.io/scan?barcode=" + barcode;
+            String url = "https://32226816.ngrok.io/scan?barcode=" + barcode + "&location=" + location;
             StringRequest MyStringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     //This code is executed if the server responds, whether or not the response contains data.
                     //The String 'response' contains the server's response.
-                    result.setText("Success: " + response);
+                    String action = " - Warehouse";
+                    if (location == 1)
+                        action = " - Lehi Elementary";
+                    else if (location == 2)
+                        action = " - Delivered to Family!";
+                    result.setText(response + action);
                 }
             }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
                 @Override
